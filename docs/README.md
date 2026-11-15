@@ -16,6 +16,7 @@ right and the note is a bug.
 | [design/node.md](design/node.md) | `components/linux-node`: imports, command line, features, the run loop, `NodeExt`, and `wasmshim-run`. |
 | [design/browser.md](design/browser.md) | `web/`: the node in a browser tab, what the page serves in `wasmshim-run`'s place, the shell's input, and the limits. |
 | [syscalls.md](syscalls.md) | Every implemented system call, with notes where support is partial. |
+| [stability.md](stability.md) | Which parts of the API are the core, and which are embedder surface that still moves. |
 | [known-issues.md](known-issues.md) | What is known to be wrong or missing today: exactness holes in translated code, Linux semantics, images, tests. |
 
 ## Reading order
