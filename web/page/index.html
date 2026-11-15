@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>wasmshim in your browser</title>
+  <meta name="description" content="An unmodified AArch64 Linux program, toybox, running in this tab inside a WebAssembly component: an emulated CPU and the Linux system-call ABI, no kernel.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect x='1' y='1' width='14' height='14' rx='3' fill='%23353a8c'/%3E%3Cpath d='M4 5l3 3-3 3M8 11h4' stroke='white' stroke-width='1.5' fill='none'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="main.js"></script>
+</head>
+<body data-state="loading">
+  <header>
+    <h1>wasmshim <span>in your browser</span></h1>
+    <p class="tagline">
+      Linux programs, no Linux. The commands below run an unmodified AArch64 Linux binary,
+      <a href="https://landley.net/toybox/">toybox</a>, inside a WebAssembly component in this
+      tab: an emulated CPU underneath, the Linux system-call ABI on top, no kernel in between.
+    </p>
+  </header>
+
+  <main>
+    <div id="loading" class="notice" role="status">
+      Downloading and compiling <span id="size">the node and the image</span>…
+    </div>
+    <div id="nojspi" class="notice warn" hidden>
+      <strong>This page needs a Chromium-based browser</strong> (Chrome or Edge 137 or newer).
+      <span id="nojspi-detail"></span>
+    </div>
+
+    <form class="controls" onsubmit="return false">
+      <label for="command">Command</label>
+      <input id="command" type="text" value="/bin/toybox uname -a" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <label for="seed">Seed</label>
+      <input id="seed" type="text" inputmode="numeric" value="1" autocomplete="off" spellcheck="false">
+      <div class="buttons">
+        <button id="run" type="button" disabled>Run</button>
+        <button id="shell" type="button" class="secondary" disabled title="toybox's shell on a console: type a line, Enter sends it">Shell</button>
+        <button id="stop" type="button" class="secondary" hidden>Stop</button>
+      </div>
+    </form>
+
+    <div class="examples" aria-label="Examples">
+      <span>Examples</span>
+      <button type="button" data-command="/bin/toybox uname -a" disabled>uname -a</button>
+      <button type="button" data-command="/bin/toybox sh -c 'echo hello; ls /'" disabled>echo; ls /</button>
+      <button type="button" data-command="/bin/toybox cat /etc/os-release" disabled>cat /etc/os-release</button>
+      <button type="button" data-command="/bin/toybox sh -c 'i=0; while [ $i -lt 5 ]; do echo $i; i=$((i+1)); done'" disabled>a shell loop</button>
+      <button type="button" data-command="/bin/toybox sleep 10" disabled>sleep 10</button>
+      <button type="button" data-command="/bin/toybox sha256sum /bin/toybox" disabled>sha256sum</button>
+      <button type="button" data-command="/bin/toybox" disabled>every command</button>
+    </div>
+
+    <pre id="output" class="terminal" aria-live="polite" aria-label="Output"></pre>
+    <form id="typing" class="typing" hidden>
+      <label for="line">Input</label>
+      <input id="line" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send">
+      <button type="submit">Send</button>
+      <button id="ctrl-c" type="button" class="secondary" title="Interrupt">Ctrl-C</button>
+      <button id="ctrl-d" type="button" class="secondary" title="End of input">Ctrl-D</button>
+    </form>
+    <p id="status" class="status" role="status">Loading…</p>
+
+    <p class="hint">
+      The first word is the program's path in the image. <code>sleep 10</code> takes ten seconds
+      of virtual time and a few milliseconds of yours: the clock jumps whenever the program waits.
+      Node options such as <code>--trace</code> (one line per system call) may come first.
+    </p>
+  </main>
+
+  <footer>
+    <p>
+      The node interprets every AArch64 instruction (the translator to WebAssembly is in the
+      repository but not wired into this build), so it is slow compared with native code.
+    </p>
+    <p>
+      A browser run repeats itself (one seed gives the same bytes and the same virtual time), but
+      it is not guaranteed to match a native run byte for byte.
+    </p>
+    <p>
+      Hosted by <a href="https://github.com/backkem/codelib/tree/main/web">codelib-web</a>.
+      Chromium only. <a href="https://github.com/backkem/wasmshim">Source on GitHub</a> ·
+      <a href="NOTICES.html">Third-party notices</a>
+    </p>
+  </footer>
+</body>
+</html>

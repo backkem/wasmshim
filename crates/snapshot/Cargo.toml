@@ -1,0 +1,18 @@
+[package]
+name = "wasmshim-snapshot"
+version = "0.0.0"
+description = "One snapshot container for every saved machine: deterministic CBOR, bulk memory as SHA-256-named chunks, optionally deflated. no_std, neutral."
+# Explicit, not inherited: other workspaces use this crate as a path dependency.
+edition = "2024"
+rust-version = "1.98"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+wasmshim-cbor = { path = "../det-cbor" }
+# The compact encoding: raw DEFLATE, pure Rust, no_std. Exact pin: the bytes it
+# writes are pinned by recorded hashes.
+miniz_oxide = { version = "=0.9.1", default-features = false, features = ["with-alloc"] }
+
+[lints.rust]
+unsafe_code = "deny"

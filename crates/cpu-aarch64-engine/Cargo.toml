@@ -1,0 +1,28 @@
+[package]
+name = "wasmshim-aarch64-engine"
+version = "0.0.0"
+description = "The A64 execution engine: interpreter + ahead-of-time translated code + dispatcher + soft TLB. Knows nothing about any OS or host."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[lib]
+test = false
+doctest = false
+
+[features]
+# The services of the engine as a host-instantiated core module (`wasmshim-aarch64-engine-module`).
+core-module = []
+# Classify the instructions translated code hands to the interpreter (diagnostics; slower).
+step-stats = []
+
+[dependencies]
+wasmshim-cpu.workspace = true
+wasmshim-aarch64.workspace = true
+wasmshim-aarch64-translate.workspace = true
+wasmshim-translate.workspace = true
+wasmshim-cpu-remote.workspace = true
+
+[lints]
+workspace = true

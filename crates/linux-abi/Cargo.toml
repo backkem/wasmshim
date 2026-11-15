@@ -1,0 +1,13 @@
+[package]
+name = "wasmshim-linux-abi"
+version = "0.0.0"
+description = "Linux application ABI as pure data: syscall numbers, errno, flags and struct layouts (no_std)."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+
+[lints]
+workspace = true

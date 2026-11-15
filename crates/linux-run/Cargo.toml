@@ -1,0 +1,23 @@
+[package]
+name = "wasmshim-run"
+version = "0.0.0"
+description = "A deterministic standalone wasmtime runner for wasmshim-linux-node: virtual clocks, seeded randomness, images served from files, a compile cache, standard streams and load/compile timing. Runs a Linux node to completion and reports load and compile timing; knows nothing about any embedder."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+wasmshim-wasmtime.workspace = true
+# The stream traits wasmtime-wasi's standard streams are written against.
+async-trait = "0.1"
+bytes = { version = "1", default-features = false }
+tokio = { version = "1", default-features = false }
+rand_core = "0.10"
+rustc-demangle = "0.1.28"
+sha2 = "0.10"
+wasmtime = { version = "=50.0.1", default-features = false, features = ["cranelift", "runtime", "std", "async", "component-model", "component-model-async", "parallel-compilation"] }
+wasmtime-wasi = { version = "=50.0.1", default-features = false, features = ["p2", "p3"] }
+
+[lints]
+workspace = true

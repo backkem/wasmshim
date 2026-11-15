@@ -1,0 +1,29 @@
+# Alpine Linux 3.24 aarch64 minirootfs plus a statically linked busybox.
+#
+# Sources are official Alpine release artifacts, pinned by URL and SHA-256:
+# - the minirootfs SHA-256 is Alpine's own (latest-releases.yaml and the .sha256 file next to it);
+# - the .apk SHA-256 was recorded from the first download over HTTPS from dl-cdn; its size matches
+#   APKINDEX (S:661032, busybox-static 1.37.0-r31).
+# `cargo xtask image alpine-busybox` downloads into .cache/artifacts, verifies, and merges the
+# archives in order (later ones win) into target/images/alpine-busybox.tar. Nothing is executed
+# on the host: archives are only read (gzip + tar); apk metadata (.PKGINFO, .SIGN.*, install
+# scripts) is dropped.
+
+description = "Alpine 3.24 aarch64 minirootfs + busybox-static (sh at /bin/busybox.static)"
+
+[[artifact]]
+url = "https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/aarch64/alpine-minirootfs-3.24.2-aarch64.tar.gz"
+sha256 = "9bf70a7f18ea44094cbb5f70c58f9af129c8214745743db0e68e5502cc2ce773"
+kind = "tar-gz"
+
+[[artifact]]
+url = "https://dl-cdn.alpinelinux.org/alpine/v3.24/main/aarch64/busybox-static-1.37.0-r31.apk"
+sha256 = "965777e06b94bf11981d5f4ecdfcd577879f4b0dda544294d1dd3f72b217bc75"
+kind = "apk"
+
+# busybox-extras 1.37.0-r31: httpd, telnetd, ... (dynamic; applet links point at /bin/busybox-extras).
+# SHA-256 recorded at first download over https; size matches APKINDEX (S:66358).
+[[artifact]]
+url = "https://dl-cdn.alpinelinux.org/alpine/v3.24/main/aarch64/busybox-extras-1.37.0-r31.apk"
+sha256 = "64a2c66f44f2218473f56dd63355d988c3da0bdae6384d6d94d32587328ccea3"
+kind = "apk"

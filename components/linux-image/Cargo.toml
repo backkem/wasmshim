@@ -1,0 +1,21 @@
+[package]
+name = "wasmshim-linux-image"
+version = "0.0.0"
+description = "A component exporting linux:host/blob with one root filesystem image compiled in."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+# Build with LINUX_IMAGE=<path to a rootfs tar>. The image is served as the blob named
+# "rootfs". Composed with wasmshim-linux-node by a component composition tool, the pair is a plain WASI
+# 0.3 command.
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wit-bindgen = { workspace = true, features = ["macros", "realloc"] }
+
+[lints]
+workspace = true

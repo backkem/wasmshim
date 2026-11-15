@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": ["ES2023", "DOM", "DOM.Iterable", "WebWorker"],
+    "types": [],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    // The kit is imported by relative path (`./codelib-web/dist/load.js`): Workers cannot
+    // resolve bare specifiers, so the build copies its browser modules to
+    // dist/codelib-web/dist/, and these root dirs let tsc find their types in node_modules.
+    "rootDirs": ["src", "node_modules"],
+    "skipLibCheck": true
+  },
+  "include": ["src"]
+}

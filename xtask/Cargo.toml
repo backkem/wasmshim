@@ -1,0 +1,18 @@
+[package]
+name = "xtask"
+version = "0.0.0"
+description = "Build orchestration for this workspace: build (the plain node), image, aot (a node with translated code), check-deps, web (the browser page)."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+anyhow = "1"
+wasmshim-image-pack.workspace = true
+wasmshim-aarch64-translate.workspace = true
+wasmshim-linux-elf.workspace = true
+wasmshim-translate.workspace = true
+
+[lints]
+workspace = true

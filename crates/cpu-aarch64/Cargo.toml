@@ -1,0 +1,20 @@
+[package]
+name = "wasmshim-aarch64"
+version = "0.0.0"
+description = "A64 decoder and interpreter behind the GuestCpu trait (knows nothing about any OS)."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+wasmshim-cpu.workspace = true
+# Pure-Rust, no_std IEEE math (fma, sqrt, rounding): the interpreter has no std and no imports.
+libm = "0.2"
+
+[features]
+# Per-PC execution counts (bench tooling: hot-code profiles). Slow; never in shipped builds.
+profile = []
+
+[lints]
+workspace = true

@@ -1,0 +1,72 @@
+name: Pages
+
+# Builds the browser page (web/: the node transpiled with the codelib-web kit, the toybox image,
+# the notices), tests it in headless Chromium against wasmshim-run running the same node and image
+# natively, and deploys it to https://backkem.github.io/wasmshim/. It downloads the toybox
+# release binary, pinned by SHA-256 in images/toybox.toml.
+#
+# GitHub only runs workflows from the top of a repository, so this one starts working once this
+# directory is the repository's root. Repository settings: Pages > Build and deployment >
+# Source: GitHub Actions.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # rustup reads rust-toolchain.toml: the pinned compiler and both wasm targets.
+      - run: rustup show
+      - uses: Swatinem/rust-cache@v2
+      - uses: cargo-bins/cargo-binstall@v1.27.0
+      - name: Install wasm-tools (pinned)
+        run: cargo binstall --no-confirm --locked wasm-tools@1.261.0
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install Chromium
+        working-directory: web
+        run: |
+          npm ci
+          npx playwright-core install --with-deps chromium-headless-shell
+
+      # The image, the node, wasmshim-run, the page, then the page's test in headless Chromium
+      # (every run compared with wasmshim-run).
+      - name: Build and test the page
+        run: cargo xtask web --test
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

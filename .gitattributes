@@ -1,0 +1,7 @@
+# The same bytes on every machine: text is LF in the repository and in the working tree.
+* text=auto eol=lf
+*.wasm binary
+*.pcap binary
+*.pcapng binary
+*.tgz binary
+*.tar binary

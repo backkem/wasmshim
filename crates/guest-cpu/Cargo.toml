@@ -1,0 +1,13 @@
+[package]
+name = "wasmshim-cpu"
+version = "0.0.0"
+description = "The execution-frontend contract: GuestCpu, Event and GuestMemory (knows nothing about any OS)."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+
+[lints]
+workspace = true

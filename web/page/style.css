@@ -1,0 +1,277 @@
+:root {
+  --bg: #fbfbfd;
+  --fg: #1d1f2b;
+  --muted: #5d6175;
+  --line: #d9dbe5;
+  --accent: #353a8c;
+  --accent-fg: #ffffff;
+  --panel: #f0f1f6;
+  --term-bg: #16171f;
+  --term-fg: #e4e6ef;
+  --term-err: #ff9d8a;
+  --warn-bg: #fff4dc;
+  --warn-line: #e3b54b;
+  --ok: #1f7a4d;
+  --bad: #b3372a;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12131a;
+    --fg: #e4e6ef;
+    --muted: #9da1b5;
+    --line: #2c2f3d;
+    --accent: #8f95ff;
+    --accent-fg: #12131a;
+    --panel: #1b1d27;
+    --term-bg: #0b0c11;
+    --warn-bg: #33290f;
+    --warn-line: #8a6c1f;
+    --ok: #6fd3a0;
+    --bad: #ff8b7a;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* `hidden` wins over the layout rules below (`.typing` is a flex row). */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0 auto;
+  max-width: 56rem;
+  padding: 1.5rem 1rem 3rem;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+a {
+  color: var(--accent);
+}
+
+code,
+pre,
+input {
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.8rem;
+}
+
+h1 span {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.tagline,
+.hint,
+footer {
+  color: var(--muted);
+}
+
+.notice {
+  margin: 1rem 0;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+}
+
+.notice.warn {
+  background: var(--warn-bg);
+  border-color: var(--warn-line);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  margin: 1rem 0 0.5rem;
+}
+
+.controls label {
+  font-weight: 600;
+}
+
+.controls #seed {
+  max-width: 12rem;
+}
+
+.buttons {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+input[type="text"] {
+  width: 100%;
+  min-width: 0;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 0.95rem;
+}
+
+button {
+  padding: 0.45rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.secondary,
+.examples button {
+  background: transparent;
+  color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.5rem 0 1rem;
+}
+
+.examples span {
+  color: var(--muted);
+  margin-right: 0.25rem;
+}
+
+.examples button {
+  padding: 0.2rem 0.6rem;
+  font-weight: 400;
+  font-size: 0.9rem;
+  border-color: var(--line);
+}
+
+.terminal {
+  min-height: 12rem;
+  max-height: 60vh;
+  margin: 0;
+  padding: 0.75rem;
+  overflow: auto;
+  border-radius: 6px;
+  background: var(--term-bg);
+  color: var(--term-fg);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.terminal [data-stream="stderr"] {
+  color: var(--term-err);
+}
+
+.typing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.typing label {
+  font-weight: 600;
+}
+
+.typing input {
+  flex: 1 1 12rem;
+}
+
+.status {
+  margin: 0.5rem 0;
+  font-weight: 600;
+}
+
+body[data-state="done"] .status {
+  color: var(--ok);
+}
+
+body[data-state="failed"] .status,
+body[data-state="error"] .status {
+  color: var(--bad);
+}
+
+footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.9rem;
+}
+
+/* The notices page. */
+.notices {
+  overflow-wrap: anywhere;
+}
+
+.notices dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.25rem 1rem;
+}
+
+.notices dt {
+  color: var(--muted);
+}
+
+.notices dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.notices .hash {
+  overflow-wrap: anywhere;
+}
+
+.notices .licence {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.notices pre {
+  padding: 0.75rem;
+  overflow: auto;
+  border-radius: 6px;
+  background: var(--panel);
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 30rem) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .notices dl {
+    grid-template-columns: 1fr;
+  }
+
+  .notices dd {
+    margin-bottom: 0.4rem;
+  }
+}

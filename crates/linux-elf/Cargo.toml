@@ -1,0 +1,15 @@
+[package]
+name = "wasmshim-linux-elf"
+version = "0.0.0"
+description = "ELF64 loader and initial process stack for Linux user programs."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+wasmshim-cpu.workspace = true
+wasmshim-linux-abi.workspace = true
+
+[lints]
+workspace = true

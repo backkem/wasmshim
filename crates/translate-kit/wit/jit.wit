@@ -1,0 +1,37 @@
+/// `translate:jit`: "instantiate this module against my memory", the
+/// capability a translator's run-time tier needs from its host: code translated while a guest
+/// runs becomes executable only through the host, since a component cannot instantiate a module
+/// itself. Shaped after component-model#401 (runtime module instantiation), so it can turn into
+/// the standard if that lands, and ISA-neutral: any engine over `wasmshim-translate` may import it.
+///
+/// Opt-in: a component imports it only in a build that wants it (`wasmshim-linux-node` with its `jit`
+/// feature, for an embedder that compiles translations at run time). A host that cannot serve it
+/// declines every call, and the engine keeps interpreting: nothing a guest observes depends on it.
+package translate:jit@0.1.0;
+
+interface jit {
+    /// Why a module was not instantiated.
+    variant error {
+        /// This host does not instantiate modules (or no longer: its table is full).
+        unsupported,
+        /// The module is not valid, or imports or exports something outside the contract.
+        invalid(string),
+    }
+
+    /// Compiles `module` and instantiates it against the calling component's engine: its
+    /// imports, all from module `engine`, are the engine core module's `memory`, its
+    /// `__indirect_function_table` and the step and fill functions it exports (named
+    /// `<prefix>_jit_step` and `<prefix>_jit_fill`, `wasmshim-linux-node`'s are `linux_jit_*`). The module
+    /// exports `funcs` functions named `f0`, `f1`, …; the host appends them to the engine's
+    /// table, in that order, and returns the index of `f0`.
+    ///
+    /// Synchronous and deterministic in effect: the engine calls it between two guest
+    /// instructions and decides only which code runs, never what it computes. The module's
+    /// bytes are copied by the call; the caller keeps ownership of nothing.
+    instantiate: func(module: list<u8>, funcs: u32) -> result<u32, error>;
+}
+
+/// What an engine with a run-time tier imports.
+world engine {
+    import jit;
+}

@@ -1,0 +1,14 @@
+[package]
+name = "wasmshim-cbor"
+version = "0.0.0"
+description = "Deterministic CBOR (RFC 8949 §4.2), a small subset: no_std, no dependencies, neutral."
+# Explicit, not inherited: other workspaces use this crate as a path dependency.
+edition = "2024"
+rust-version = "1.98"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+
+[lints.rust]
+unsafe_code = "deny"

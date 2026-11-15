@@ -1,0 +1,64 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    # The same bytes on every machine is the point: the tests pin capture and result hashes,
+    # so they run on more than one operating system.
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      # rustup reads rust-toolchain.toml: the pinned compiler, both wasm targets, rustfmt, clippy.
+      - run: rustup show
+      - uses: Swatinem/rust-cache@v2
+      - uses: cargo-bins/cargo-binstall@v1.27.0
+      - name: Install wasm-tools (pinned)
+        run: cargo binstall --no-confirm --locked wasm-tools@1.261.0
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test
+      - name: Layer dependency rules
+        run: cargo xtask check-deps
+      - name: Build and validate the node
+        run: cargo xtask build
+      - name: Docs
+        run: cargo doc --no-deps --workspace
+        env:
+          RUSTDOCFLAGS: -D warnings
+
+  # Runs a real program end to end. It downloads a toybox release binary (pinned by SHA-256),
+  # so it is a job of its own: a mirror outage must not look like a broken build.
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup show
+      - uses: Swatinem/rust-cache@v2
+      - uses: cargo-bins/cargo-binstall@v1.27.0
+      - run: cargo binstall --no-confirm --locked wasm-tools@1.261.0
+      - run: cargo xtask image toybox
+      - run: cargo xtask build
+      - name: toybox says hello
+        run: |
+          out=$(cargo run --release -p wasmshim-run -- --image target/images/toybox.tar \
+            target/wasm32-wasip2/release/wasmshim_linux_node.wasm /bin/toybox echo hello)
+          test "$out" = hello
+      - name: the same, as translated code
+        run: |
+          cargo xtask aot toybox
+          out=$(cargo run --release -p wasmshim-run -- --image target/images/toybox.tar \
+            target/aot/toybox/wasmshim_linux_node.wasm --stats /bin/toybox echo hello 2>stats)
+          test "$out" = hello
+          # The engine prints this line with translated=0 too: require that translated code ran.
+          grep -Eq "engine: translated=[1-9]" stats

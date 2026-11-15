@@ -1,0 +1,71 @@
+[package]
+name = "wasmshim-linux-node"
+version = "0.0.0"
+description = "The Linux personality + the A64 interpreter as a WASI 0.3 command component."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+# A wasm32-wasip2 component exporting wasi:cli/run@0.3.0. It imports WASI 0.3 clocks, random
+# and cli (plus std's p2 stdio set) and linux:host/blob for the root filesystem. A provider
+# component exporting `linux:host/blob` (such as `wasmshim-linux-image`, which compiles one rootfs tar in)
+# supplies the image; the node and the provider are composed into one command with a component
+# composition tool such as `wac`.
+#
+# Usage: wasmshim-linux-node [--trace] [--stats] [--host-loopback] [--hostname H] [--ns-per-insn N] [--quantum N] [--image NAME]
+#                   [--engine auto|interp|dbt|profile] [--jit-threshold N] [--iface SPEC]...
+#                   [--kernel-release S] [--kernel-version S] [--kernel-builder S]
+#                   [--console] [--console-size COLSxROWS] [--console-hints]   (a terminal on stdio)
+#                   [--env K=V]... [--] PROGRAM [ARGS...]
+#
+# Builds:
+#   (default)            no network: AF_INET/AF_INET6 beyond the loopback is ENETUNREACH; no
+#                        wasi:sockets import (runs under any WASI 0.3 host)
+#   --features net       also imports wasi:sockets@0.3 (types) for non-local traffic: stock
+#                        `wasmtime run -S p3,inherit-network`, or composed with a socket provider
+# An embedder that needs more (a provider's socket extensions, devices, a debugger) depends on
+# this crate with `default-features = false` and exports `wasi:cli/run` itself (`NodeExt`).
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["export"]
+# `export` and `net` are the plain node's. The rest (`blob-words`, `jit`, `step-stats`) is embedder
+# surface, unstable: for programs that embed the node, and the first to change.
+# Exports `wasi:cli/run@0.3.0` (the plain node). Off for an embedder's own component.
+export = []
+net = []
+# Reads the root filesystem through `linux:host/blob-words` (0.1.1): eight bytes per element
+# across the component boundary instead of one. On in every node composed with its image
+# provider; hosts that serve `blob` themselves (`wasmshim-run`, or an embedder's own
+# host) build without it.
+blob-words = []
+# The run-time translation tier: imports `translate:jit` (crates/translate-kit/wit)
+# to instantiate what ahead-of-time translation did not cover; its engine core module exports
+# its function table and its step and fill functions for the host (build.rs).
+jit = []
+# Dev diagnostics: `stat:engine` adds the slow-path steps by class and the most
+# frequent stepped shapes (slower: every step is classified).
+step-stats = ["wasmshim-aarch64-engine/step-stats"]
+
+[dependencies]
+wasmshim-cpu.workspace = true
+wasmshim-kernel.workspace = true
+wasmshim-aarch64.workspace = true
+# The two-tier engine (interpreter + ahead-of-time translated code). build.rs links
+# the translations: $LINUX_AOT_OBJ (an object the translator produced), or an empty object.
+wasmshim-aarch64-engine.workspace = true
+wasmshim-linux-abi.workspace = true
+wasmshim-linux.workspace = true
+wasip3.workspace = true
+# async-spawn/inter-task-wakeup are always on, so switching the `net` feature rebuilds only
+# this crate.
+wit-bindgen = { workspace = true, features = ["macros", "realloc", "async-spawn", "inter-task-wakeup"] }
+
+[build-dependencies]
+wasmshim-aarch64-translate.workspace = true
+
+[lints]
+workspace = true

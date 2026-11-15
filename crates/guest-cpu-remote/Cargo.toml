@@ -1,0 +1,14 @@
+[package]
+name = "wasmshim-cpu-remote"
+version = "0.0.0"
+description = "GuestCpu/GuestMemory backed by an execution engine in another Wasm instance (the jit engine ABI, the engine services and their client). Knows nothing about any OS or host."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+wasmshim-cpu.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,21 @@
+{
+  "name": "wasmshim-web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "wasmshim in the browser: runs the wasmshim-linux-node component on a toybox image in a Worker, on the codelib-web host kit, with a page to try it.",
+  "license": "MIT OR Apache-2.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "serve": "node scripts/serve.mjs dist 8080 /wasmshim/",
+    "test": "node test/run.mjs"
+  },
+  "devDependencies": {
+    "codelib-web": "file:vendor/codelib-web-0.1.2.tgz",
+    "playwright-core": "1.64.0",
+    "typescript": "7.0.2"
+  }
+}

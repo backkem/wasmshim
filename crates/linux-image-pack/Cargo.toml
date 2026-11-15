@@ -1,0 +1,23 @@
+[package]
+name = "wasmshim-image-pack"
+version = "0.0.0"
+description = "Packs root filesystem images (indexed tar archives) from TOML recipes of pinned upstream artifacts."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+toml = "1"
+sha2 = "0.10"
+flate2 = "1"
+# Pure-Rust xz (Debian .deb data members).
+lzma-rs = "0.3"
+# Pure-Rust zstd (`tar-zst` artifacts).
+ruzstd = "0.9"
+wasmshim-linux.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,32 @@
+[package]
+name = "wasmshim-aarch64-engine-module"
+version = "0.0.0"
+description = "The A64 engine as a core Wasm module with no imports, driven through the engine core ABI by a host that compiles run-time translations (the optional run-time-JIT tier)."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+# `cargo build --release --target wasm32-wasip2 -p wasmshim-aarch64-engine-module`; build.rs makes the
+# linker emit a plain core module (no component, no WASI imports) and links the ahead-of-time
+# translations ($LINUX_AOT_OBJ, or an empty object). Natively the crate is empty.
+[lib]
+crate-type = ["cdylib"]
+test = false
+doctest = false
+
+[features]
+step-stats = ["wasmshim-aarch64-engine/step-stats"]
+
+[dependencies]
+wasmshim-aarch64-engine = { workspace = true, features = ["core-module"] }
+wasmshim-cpu-remote.workspace = true
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+dlmalloc = { version = "0.2.14", features = ["global"] }
+
+[build-dependencies]
+wasmshim-aarch64-translate.workspace = true
+
+[lints]
+workspace = true

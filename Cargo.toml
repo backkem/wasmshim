@@ -1,0 +1,50 @@
+[workspace]
+resolver = "3"
+members = ["crates/*", "components/*", "xtask"]
+# Plain `cargo build`/`cargo test` stay native: components are wasm32-wasip2 artifacts.
+default-members = ["crates/*", "components/*", "xtask"]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.98"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/backkem/wasmshim"
+publish = false
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+
+[workspace.dependencies]
+wasmshim-cpu = { path = "crates/guest-cpu" }
+wasmshim-kernel = { path = "crates/guest-kernel" }
+wasmshim-debuginfo = { path = "crates/guest-debuginfo" }
+wasmshim-aarch64 = { path = "crates/cpu-aarch64" }
+wasmshim-linux-abi = { path = "crates/linux-abi" }
+wasmshim-linux-elf = { path = "crates/linux-elf" }
+wasmshim-linux = { path = "crates/linux-personality" }
+wasmshim-aarch64-translate = { path = "crates/cpu-aarch64-translate" }
+wasmshim-translate = { path = "crates/translate-kit" }
+wasmshim-cpu-remote = { path = "crates/guest-cpu-remote" }
+wasmshim-wasmtime = { path = "crates/linux-host-wasmtime" }
+wasmshim-aarch64-engine = { path = "crates/cpu-aarch64-engine" }
+wasmshim-cbor = { path = "crates/det-cbor" }
+wasmshim-snapshot = { path = "crates/snapshot" }
+wasmshim-image-pack = { path = "crates/linux-image-pack" }
+wit-bindgen = { version = "=0.61.1", default-features = false }
+wasip3 = { version = "=0.8.0", default-features = false }
+thiserror = "2"
+
+[profile.release]
+debug = "line-tables-only"
+
+# Disk is tight on dev machines: full debug info is most of target/ on Windows.
+[profile.dev]
+debug = "line-tables-only"
+
+# Dependencies are optimised in dev builds too: wasmtime's Cranelift is 12-16x slower
+# unoptimised. Workspace crates stay unoptimised.
+[profile.dev.package."*"]
+opt-level = 3

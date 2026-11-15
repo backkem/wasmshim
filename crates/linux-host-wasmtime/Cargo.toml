@@ -1,0 +1,16 @@
+[package]
+name = "wasmshim-wasmtime"
+version = "0.0.0"
+description = "The host side of translate:jit for wasmtime embedders: instantiates a guest-supplied engine core module on its own store and compiles the code it translates. Knows nothing about the embedder."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+wasmshim-cpu-remote.workspace = true
+wasmtime = { version = "=50.0.1", default-features = false, features = ["cranelift", "runtime", "std", "component-model", "parallel-compilation"] }
+thiserror.workspace = true
+
+[lints]
+workspace = true

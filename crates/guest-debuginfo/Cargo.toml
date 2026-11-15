@@ -1,0 +1,16 @@
+[package]
+name = "wasmshim-debuginfo"
+version = "0.0.0"
+description = "Symbols (ELF symbol tables) and source lines (DWARF line tables) of guest programs, for debuggers; personality-neutral, host-side only."
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+object = { version = "0.40", default-features = false, features = ["read_core", "elf"] }
+gimli = { version = "0.33", default-features = false, features = ["read"] }
+rustc-demangle = "0.1"
+
+[lints]
+workspace = true

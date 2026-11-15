@@ -1,0 +1,6 @@
+[alias]
+xtask = "run --quiet --package xtask --"
+
+# Guest unit tests run inside wasmtime.
+[target.wasm32-wasip2]
+runner = "wasmtime run --"

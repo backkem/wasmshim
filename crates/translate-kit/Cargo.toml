@@ -1,0 +1,22 @@
+[package]
+name = "wasmshim-translate"
+version = "0.0.0"
+description = "The ISA-neutral half of a guest-code -> Wasm translator: the IR and its passes, regions and loop nests, the translated-code ABI, content-keyed translation directories and objects, standalone modules, and the run-time translation tier. no_std, neutral (any engine may use it). Front halves (wasmshim-aarch64-translate, ...) sit next to their CPUs."
+# Explicit, not inherited: other workspaces use this crate as a path dependency.
+edition = "2024"
+rust-version = "1.98"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[dependencies]
+# Exact pins, shared with the front halves (the bytes it writes are pinned by recorded hashes).
+wasm-encoder = { version = "=0.258.3", default-features = false }
+sha2 = { version = "0.10", default-features = false }
+# Local compaction reads finished bodies.
+wasmparser = { version = "=0.258.3", default-features = false, features = ["simd"] }
+
+[dev-dependencies]
+wasmparser = { version = "=0.258.3", default-features = false, features = ["validate", "features", "simd"] }
+
+[lints.rust]
+unsafe_code = "deny"

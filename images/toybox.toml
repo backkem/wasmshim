@@ -1,0 +1,49 @@
+# A statically linked AArch64 toybox and a few files of our own: a small image whose every
+# program is under a permissive licence (toybox: 0BSD; the musl C library linked into it: MIT).
+#
+# The binary is toybox's own release build, pinned by URL and SHA-256. The SHA-256 was recorded
+# from a download over https and matches the sums the release announcement publishes (the
+# README next to the binary links them: lists.landley.net, toybox, 2026-October, 010015).
+# toybox is a multi-call binary: run `/bin/toybox <command>` (`/bin/toybox` alone lists the
+# commands). There is no `/bin/sh`: the shell is `/bin/toybox sh`.
+
+description = "toybox 0.8.15 (static, aarch64) at /bin/toybox, with /etc and /tmp"
+
+[[artifact]]
+url = "https://landley.net/toybox/downloads/binaries/0.8.15/toybox-aarch64"
+sha256 = "be360e78774c9ad599f2c0a606a2a7579840f9957ffccdc9898b0dd8e3f87e88"
+kind = "file"
+path = "bin/toybox"
+
+[[dir]]
+path = "etc"
+
+[[dir]]
+path = "root"
+mode = "700"
+
+[[dir]]
+path = "tmp"
+mode = "1777"
+
+[[file]]
+path = "etc/os-release"
+content = """
+NAME="wasmshim toybox"
+ID=toybox
+VERSION_ID=0.8.15
+PRETTY_NAME="toybox 0.8.15 on wasmshim"
+HOME_URL="https://github.com/backkem/wasmshim"
+"""
+
+[[file]]
+path = "etc/passwd"
+content = "root:x:0:0:root:/root:/bin/toybox\n"
+
+[[file]]
+path = "etc/group"
+content = "root:x:0:\n"
+
+[[file]]
+path = "etc/hostname"
+content = "linux\n"
